@@ -86,12 +86,12 @@ func Update(accessToken string, market string) error {
 
 		// Use a random keyword to search for tracks from Spotify catalogue.
 		var n int64
-		nBig, err := rand.Int(rand.Reader, big.NewInt(int64(len(SearchTerms))))
-		if err != nil {
+		if nBig, err := rand.Int(rand.Reader, big.NewInt(int64(len(SearchTerms)))); err != nil {
 			// Fallback to deterministic random number generator.
 			n = int64(mathRand.Intn(len(SearchTerms)))
+		} else {
+			n = nBig.Int64()
 		}
-		n = nBig.Int64()
 		searchTerm := SearchTerms[n]
 
 		query := url.Values{}
