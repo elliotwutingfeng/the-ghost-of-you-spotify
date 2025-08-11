@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"net/url"
 	"slices"
+	"strings"
 	"time"
 )
 
@@ -97,44 +98,44 @@ func Update(accessToken string, market string) error {
 		query := url.Values{}
 		query.Set("q", searchTerm)
 		query.Set("type", "track")
+		query.Set("limit", "20")
 		searchURL := fmt.Sprintf("https://api.spotify.com/v1/search?%s", query.Encode())
 		req, _ := sc.newRequest("GET", searchURL, nil)
-
-		// Find a suitable track from search results.
-		// The track should not be from a local file and must be available in the user's market.
 		var searchResponse SpotifySearchResponse
 		if err := sc.getJSON(req, &searchResponse); err != nil {
 			return err
 		}
+
+		// Find a suitable track from search results.
+		// The track should not be from a local file and must be available in the user's market.
+		var nonLocalAndAvailableTrackIDs []string
 		for _, item := range searchResponse.Tracks.Items {
-			if item.IsLocal {
+			if item.IsLocal || !slices.Contains(item.AvailableMarkets, market) {
 				continue
 			}
-			if !slices.Contains(item.AvailableMarkets, market) {
-				continue
-			}
+			nonLocalAndAvailableTrackIDs = append(nonLocalAndAvailableTrackIDs, item.ID)
+		}
 
-			// Accept the track only if it does not exist in the user's "Liked Songs" playlist.
-			query = url.Values{}
-			query.Set("ids", item.ID)
-			checkURL := fmt.Sprintf("https://api.spotify.com/v1/me/tracks/contains?%s", query.Encode())
-			req, _ = sc.newRequest("GET", checkURL, nil)
-
-			var existsInLibraryResponse []bool
-			if err := sc.getJSON(req, &existsInLibraryResponse); err != nil {
-				continue
-			}
-			if len(existsInLibraryResponse) > 0 && !existsInLibraryResponse[0] {
-				trackID = item.ID
-				fmt.Println("🎯 Found track   | ID:", item.ID)
+		// Accept first track that does not exist in the user's "Liked Songs" playlist.
+		query = url.Values{}
+		query.Set("ids", strings.Join(nonLocalAndAvailableTrackIDs, ","))
+		checkURL := fmt.Sprintf("https://api.spotify.com/v1/me/tracks/contains?%s", query.Encode()) // limit is 50 ids.
+		req, _ = sc.newRequest("GET", checkURL, nil)
+		var existsInLibraryResponse []bool
+		if err := sc.getJSON(req, &existsInLibraryResponse); err == nil {
+			if i := slices.Index(existsInLibraryResponse, false); i != -1 {
+				trackID = nonLocalAndAvailableTrackIDs[i]
 				break
 			}
 		}
+		time.Sleep(1 * time.Second) // Rate limiting.
 	}
 
 	if trackID == "" {
 		log.Fatalf("Exceeded maximum limit of %d attempts. No suitable track found.", maxAttempts)
 	}
+
+	fmt.Println("🎯 Found track   | ID:", trackID)
 
 	tracksURL := "https://api.spotify.com/v1/me/tracks"
 	tracksBody := map[string][]string{"ids": {trackID}}
