@@ -62,8 +62,8 @@ func signInToSpotify(clientID string, redirectHost string) (authorizationCode st
 		r.ParseForm()
 		receivedState := r.FormValue("state")
 		if receivedState != state {
-			http.Error(w, "Invalid state", http.StatusBadRequest)
-			log.Fatalf("State mismatch: expected %s, got %s", state, receivedState)
+			http.Error(w, "State mismatch.", http.StatusBadRequest)
+			log.Fatal("State mismatch.")
 		} else {
 			w.Write([]byte("Authenticated with Spotify. You may now close this window."))
 		}
