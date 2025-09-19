@@ -85,7 +85,7 @@ You can use a job scheduler like cron to run this program at regular intervals t
 Build the program.
 
 ```bash
-# This creates an executable program file at /dist/theghostofyouspotify
+# This creates an executable program file at ./dist/theghostofyouspotify
 make build
 ```
 
