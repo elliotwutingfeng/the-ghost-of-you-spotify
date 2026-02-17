@@ -26,7 +26,7 @@ Schedule it with a job scheduler like cron and let [the ghost of you](https://en
 Tested on Linux x64
 
 -   Go 1.24
--   [Spotify Developer Account](https://developer.spotify.com) (can be the same as your Spotify account)
+-   [Spotify Developer Account with Spotify Premium access](https://developer.spotify.com) (can be the same as your Spotify account)
 
 ## Setup
 
@@ -42,7 +42,7 @@ Alternatively, make a copy of [.env.txt](./.env.txt) and name it `.env`.
 
 ### Create A Spotify App
 
-1. Sign in to your [Spotify Developer](https://developer.spotify.com) account.
+1. Sign in to your [Spotify Developer](https://developer.spotify.com) account (Spotify Premium is required).
 1. [Create](https://developer.spotify.com/dashboard/create) a spotify app.
 1. Fill in the following details
 
