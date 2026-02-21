@@ -26,7 +26,7 @@ Schedule it with a job scheduler like cron and let [the ghost of you](https://en
 Tested on Linux x64
 
 -   Go 1.24
--   [Spotify Developer Account with Spotify Premium access](https://developer.spotify.com) (can be the same as your Spotify account)
+-   [Spotify Developer Account with Spotify Premium access](https://developer.spotify.com)
 
 ## Setup
 
