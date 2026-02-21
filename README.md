@@ -25,7 +25,7 @@ Schedule it with a job scheduler like cron and let [the ghost of you](https://en
 
 Tested on Linux x64
 
--   Go 1.24
+-   Go 1.25
 -   [Spotify Developer Account with Spotify Premium access](https://developer.spotify.com)
 
 ## Setup
@@ -72,9 +72,9 @@ If successful, the program should terminate with output similar to the following
 
 ```text
 🔍 Looking for a suitable ghost track...
-🎯 Found track   | ID: 0000000000000000000000
-📝 Added track   | ID: 0000000000000000000000
-❌ Removed track | ID: 0000000000000000000000
+🎯 Found track   | URI: spotify:track:0000000000000000000000
+📝 Added track   | URI: spotify:track:0000000000000000000000
+❌ Removed track | URI: spotify:track:0000000000000000000000
 👻 Boo! Your "Liked Songs" playlist should be synced up now across all devices.
 ```
 
