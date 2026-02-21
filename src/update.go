@@ -98,7 +98,7 @@ func Update(accessToken string, market string) error {
 		query := url.Values{}
 		query.Set("q", searchTerm)
 		query.Set("type", "track")
-		query.Set("limit", "20")
+		query.Set("limit", "10")
 		searchURL := fmt.Sprintf("https://api.spotify.com/v1/search?%s", query.Encode())
 		req, _ := sc.newRequest("GET", searchURL, nil)
 		var searchResponse SpotifySearchResponse
