@@ -137,11 +137,12 @@ func Update(accessToken string, market string) error {
 
 	fmt.Println("🎯 Found track   | URI:", trackURI)
 
-	tracksURL := "https://api.spotify.com/v1/me/library"
-	tracksBody := map[string][]string{"uris": {trackURI}}
+	tracksQuery := url.Values{}
+	tracksQuery.Set("uris", trackURI)
+	tracksURL := fmt.Sprintf("https://api.spotify.com/v1/me/library?%s", tracksQuery.Encode())
 
 	// Add track
-	req, _ := sc.newRequest("PUT", tracksURL, tracksBody)
+	req, _ := sc.newRequest("PUT", tracksURL, nil)
 	if err := sc.getJSON(req, nil); err != nil {
 		log.Fatalf("Failed to add track: %v", err)
 	}
@@ -151,7 +152,7 @@ func Update(accessToken string, market string) error {
 	time.Sleep(4 * time.Second)
 
 	// Remove track
-	req, _ = sc.newRequest("DELETE", tracksURL, tracksBody)
+	req, _ = sc.newRequest("DELETE", tracksURL, nil)
 	if err := sc.getJSON(req, nil); err != nil {
 		log.Fatalf("Failed to remove track: %v", err)
 	}
