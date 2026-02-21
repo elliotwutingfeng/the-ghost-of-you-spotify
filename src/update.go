@@ -76,13 +76,13 @@ func Update(accessToken string, market string) error {
 		AccessToken: accessToken,
 	}
 
-	var trackID string
+	var trackURI string
 	var attemptCount int
 	const maxAttempts int = 30 // Avoid spamming Spotify API perpetually.
 
 	fmt.Println("🔍 Looking for a suitable ghost track...")
 
-	for trackID == "" && attemptCount <= maxAttempts {
+	for trackURI == "" && attemptCount <= maxAttempts {
 		attemptCount++
 
 		// Use a random keyword to search for tracks from Spotify catalogue.
@@ -108,44 +108,44 @@ func Update(accessToken string, market string) error {
 
 		// Find a suitable track from search results.
 		// The track should not be from a local file and must be available in the user's market.
-		var nonLocalAndAvailableTrackIDs []string
+		var nonLocalAndAvailableTrackURIs []string
 		for _, item := range searchResponse.Tracks.Items {
 			if item.IsLocal || !slices.Contains(item.AvailableMarkets, market) {
 				continue
 			}
-			nonLocalAndAvailableTrackIDs = append(nonLocalAndAvailableTrackIDs, item.ID)
+			nonLocalAndAvailableTrackURIs = append(nonLocalAndAvailableTrackURIs, "spotify:track:" + item.ID)
 		}
 
 		// Accept first track that does not exist in the user's "Liked Songs" playlist.
 		query = url.Values{}
-		query.Set("ids", strings.Join(nonLocalAndAvailableTrackIDs, ","))
-		checkURL := fmt.Sprintf("https://api.spotify.com/v1/me/library/contains?%s", query.Encode()) // limit is 40 ids.
+		query.Set("uris", strings.Join(nonLocalAndAvailableTrackURIs, ","))
+		checkURL := fmt.Sprintf("https://api.spotify.com/v1/me/library/contains?%s", query.Encode()) // limit is 40 URIs.
 		req, _ = sc.newRequest("GET", checkURL, nil)
 		var existsInLibraryResponse []bool
 		if err := sc.getJSON(req, &existsInLibraryResponse); err == nil {
 			if i := slices.Index(existsInLibraryResponse, false); i != -1 {
-				trackID = nonLocalAndAvailableTrackIDs[i]
+				trackURI = nonLocalAndAvailableTrackURIs[i]
 				break
 			}
 		}
 		time.Sleep(1 * time.Second) // Rate limiting.
 	}
 
-	if trackID == "" {
+	if trackURI == "" {
 		log.Fatalf("Exceeded maximum limit of %d attempts. No suitable track found.", maxAttempts)
 	}
 
-	fmt.Println("🎯 Found track   | ID:", trackID)
+	fmt.Println("🎯 Found track   | URI:", trackURI)
 
 	tracksURL := "https://api.spotify.com/v1/me/library"
-	tracksBody := map[string][]string{"ids": {trackID}}
+	tracksBody := map[string][]string{"uris": {trackURI}}
 
 	// Add track
 	req, _ := sc.newRequest("PUT", tracksURL, tracksBody)
 	if err := sc.getJSON(req, nil); err != nil {
 		log.Fatalf("Failed to add track: %v", err)
 	}
-	fmt.Println("📝 Added track   | ID:", trackID)
+	fmt.Println("📝 Added track   | URI:", trackURI)
 
 	// Wait a short while
 	time.Sleep(4 * time.Second)
@@ -155,7 +155,7 @@ func Update(accessToken string, market string) error {
 	if err := sc.getJSON(req, nil); err != nil {
 		log.Fatalf("Failed to remove track: %v", err)
 	}
-	fmt.Println("❌ Removed track | ID:", trackID)
+	fmt.Println("❌ Removed track | URI:", trackURI)
 	fmt.Println("👻 Boo! Your \"Liked Songs\" playlist should be synced up now across all devices.")
 
 	return nil
