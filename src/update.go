@@ -119,7 +119,7 @@ func Update(accessToken string, market string) error {
 		// Accept first track that does not exist in the user's "Liked Songs" playlist.
 		query = url.Values{}
 		query.Set("ids", strings.Join(nonLocalAndAvailableTrackIDs, ","))
-		checkURL := fmt.Sprintf("https://api.spotify.com/v1/me/tracks/contains?%s", query.Encode()) // limit is 50 ids.
+		checkURL := fmt.Sprintf("https://api.spotify.com/v1/me/library/contains?%s", query.Encode()) // limit is 40 ids.
 		req, _ = sc.newRequest("GET", checkURL, nil)
 		var existsInLibraryResponse []bool
 		if err := sc.getJSON(req, &existsInLibraryResponse); err == nil {
@@ -137,7 +137,7 @@ func Update(accessToken string, market string) error {
 
 	fmt.Println("🎯 Found track   | ID:", trackID)
 
-	tracksURL := "https://api.spotify.com/v1/me/tracks"
+	tracksURL := "https://api.spotify.com/v1/me/library"
 	tracksBody := map[string][]string{"ids": {trackID}}
 
 	// Add track
