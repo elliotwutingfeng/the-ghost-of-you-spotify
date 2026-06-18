@@ -25,7 +25,7 @@ Schedule it with a job scheduler like cron and let [the ghost of you](https://en
 
 Tested on Linux x64
 
--   Go 1.25
+-   Go 1.26
 -   [Spotify Developer Account with Spotify Premium access](https://developer.spotify.com)
 
 ## Setup
@@ -58,9 +58,9 @@ Alternatively, make a copy of [.env.txt](./.env.txt) and name it `.env`.
 ## Usage
 
 > [!IMPORTANT]
-> When running this program for the first time, your web browser will open up a Spotify sign-in webpage for you to sign in and grant your newly created app access permissions to your Spotify account's library.
+> When running this program for the first time, your web browser will open up a Spotify sign-in webpage for you to sign in and grant your newly created app access permissions to your Spotify account's library. A refresh token will be stored in the [.env](./.env) file for future requests to the Spotify API so that you do not have to sign in again.
 >
-> Sign-in should not be needed for subsequent runs as this program will use a refresh token stored in the [.env](./.env) file for future requests to the Spotify API.
+> This refresh token will [expire](https://developer.spotify.com/blog/2026-06-18-refresh-token-expiration) after 6 months. When this happens, running this program will prompt you to sign-in again to retrieve a new refresh token (automatically stored in the [.env](./.env) file).
 
 Run the following. If prompted via web browser, sign-in to your Spotify account and grant app access.
 
