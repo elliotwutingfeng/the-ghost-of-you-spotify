@@ -1,7 +1,6 @@
 # the-ghost-of-you-spotify
 
 [![Go Reference](https://img.shields.io/badge/go-reference-blue?logo=go&logoColor=white&style=for-the-badge)](https://pkg.go.dev/github.com/elliotwutingfeng/the-ghost-of-you-spotify)
-[![Go Report Card](https://goreportcard.com/badge/github.com/elliotwutingfeng/the-ghost-of-you-spotify?style=for-the-badge)](https://goreportcard.com/report/github.com/elliotwutingfeng/the-ghost-of-you-spotify)
 [![License](https://img.shields.io/badge/LICENSE-BSD--3--CLAUSE-GREEN?style=for-the-badge)](LICENSE)
 
 ## What is this?
